@@ -1,0 +1,4 @@
+# postcss-loader和babel-loader兼容浏览器的清单
+
+IE 9 # 兼容IE 9
+chrome 35 # 兼容chrome 35
