@@ -13,7 +13,7 @@
 
 **全文概览**
 
-![Alt text](readmeImage/readmeImage/image-1.png)
+![Alt text](./readmeImage/image-1.png)
 
 ## 一. 前言
 
@@ -492,7 +492,7 @@ module.exports = {
 
 配置完成后再**npm run build:dev**打包,借助**serve -s dist**启动后在浏览器查看,可以看到样式生效了。
 
-![Alt text](readmeImage/image-2.png)
+![Alt text](./readmeImage/image-2.png)
 
 ### 4.3 支持less或scss
 
@@ -537,7 +537,7 @@ module.exports = {
 
 在**App.tsx**中引入**app.less**,执行**npm run build:dev**打包,借助**serve -s dist**启动项目,可以看到**less**文件编写的样式编译**css**后也插入到**style**标签了了。
 
-![Alt text](readmeImage/image-3.png)
+![Alt text](./readmeImage/image-3.png)
 
 ### 4.4 处理css3前缀兼容
 
@@ -590,7 +590,7 @@ chrome 35 # 兼容chrome 35
 
 以兼容到**ie9**和**chrome35**版本为例,配置好后,执行**npm run build:dev**打包,可以看到打包后的**css**文件已经加上了**ie**和谷歌内核的前缀
 
-![Alt text](readmeImage/image-4.png)
+![Alt text](./readmeImage/image-4.png)
 
 上面可以看到解析**css**和**less**有很多重复配置,可以进行提取**postcss-loader**配置优化一下
 
@@ -852,7 +852,7 @@ module.exports = merge(baseConfig, {
 
 再执行**npm run build:dev**打包,就可以看到**public**下的**favicon.ico**图标文件被复制到**dist**文件中了。
 
-![Alt text](readmeImage/image-5.png)
+![Alt text](./readmeImage/image-5.png)
 
 ### 4.8 处理图片文件
 
@@ -919,7 +919,7 @@ declare module '*.css'
 ```
 添加图片声明文件后,就可以正常引入图片了, 然后执行**npm run build:dev**打包,借助**serve -s dist**查看效果,可以看到可以正常解析图片了,并且小于**10kb**的图片被转成了**base64**位格式的。
 
-![Alt text](readmeImage/image-6.png)
+![Alt text](./readmeImage/image-6.png)
 
 **css**中的背景图片一样也可以解析,修改**app.tsx**。
 
@@ -1068,10 +1068,10 @@ export default App
 在两个输入框分别输入内容后,修改**App.tsx**中**h2**标签的文本,会发现在不刷新浏览器的情况下,页面内容进行了热更新,并且**react**组件状态也会保留。
 
 
-![Alt text](readmeImage/image-7.png)
+![Alt text](./readmeImage/image-7.png)
 
 
-![Alt text](readmeImage/image-8.png)
+![Alt text](./readmeImage/image-8.png)
 
 > 新增或者删除页面**hooks**时,热更新时组件状态不会保留。
 
@@ -1114,7 +1114,7 @@ module.exports = smp.wrap(merge(prodConfig, {
 
 执行**npm run build:analy**命令
 
-![Alt text](readmeImage/image-9.png)
+![Alt text](./readmeImage/image-9.png)
 
 可以在图中看到各**plugin**和**loader**的耗时时间,现在因为项目内容比较少,所以耗时都比较少,在真正的项目中可以通过这个来分析打包时间花费在什么地方,然后来针对性的优化。
 
@@ -1144,11 +1144,11 @@ module.exports = {
 
 通过开启**webpack5**持久化存储缓存,再次打包的时间提升了**90%**。
 
-![Alt text](readmeImage/image-10.png)
+![Alt text](./readmeImage/image-10.png)
 
 缓存的存储位置在**node_modules/.cache/webpack**,里面又区分了**development**和**production**缓存
 
-![Alt text](readmeImage/image-11.png)
+![Alt text](./readmeImage/image-11.png)
 
 ### 6.3 开启多线程loader
 
@@ -1428,7 +1428,7 @@ module.exports = smp.wrap(merge(prodConfig, {
 
 配置好后,执行**npm run build:analy**命令,打包完成后浏览器会自动打开窗口,可以看到打包文件的分析结果页面,可以看到各个文件所占的资源大小。
 
-![Alt text](readmeImage/image-12.png)
+![Alt text](./readmeImage/image-12.png)
 
 ### 7.2 抽取css样式文件
 
@@ -1499,7 +1499,7 @@ module.exports = merge(baseConfig, {
 
 上面配置了打包时把**css**抽离为单独**css**文件的配置,打开打包后的文件查看,可以看到默认**css**是没有压缩的,需要手动配置一下压缩**css**的插件。
 
-![Alt text](readmeImage/image-13.png)
+![Alt text](./readmeImage/image-13.png)
 
 可以借助[css-minimizer-webpack-plugin](https://link.juejin.cn/?target=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fcss-minimizer-webpack-plugin)来压缩css,安装依赖
 
@@ -1677,11 +1677,11 @@ module.exports = {
 
 配置完成后执行打包,可以看到**node_modules**里面的模块被抽离到**verdors.ec725ef1.js**中,业务代码在**main.9a6bf38a.js**中。
 
-![Alt text](readmeImage/image-15.png)
+![Alt text](./readmeImage/image-15.png)
 
 测试一下,此时**verdors.js**的**chunkhash**是**ec725ef1**,**main.js**文件的**chunkhash**是**9a6bf38a**,改动一下**App.tsx**,再次打包,可以看到下图**main.js**的**chunkhash**值变化了,但是**vendors.js**的**chunkhash**还是原先的,这样发版后,浏览器就可以继续使用缓存中的**verdors.ec725ef1.js**,只需要重新请求**main.js**就可以了。
 
-![Alt text](readmeImage/image-16.png)
+![Alt text](./readmeImage/image-16.png)
 
 ### 7.7 tree-shaking清理未引用js
 
@@ -1727,7 +1727,7 @@ export default App
 
 执行打包,可以看到在**main.js**中搜索**Demo**,只搜索到了**Demo1**, 代表**Demo2**组件被**tree-shaking**移除掉了。
 
-![Alt text](readmeImage/image-17.png)
+![Alt text](./readmeImage/image-17.png)
 
 ### 7..8 tree-shaking清理未使用css
 
@@ -1802,11 +1802,11 @@ export default App
 
 此时先执行一下打包,查看**main.css**
 
-![Alt text](readmeImage/image-18.png)
+![Alt text](./readmeImage/image-18.png)
 
 因为页面中中有**h2**标签, **smallImg**和**bigImg**类名,所以打包后的**css**也有,此时修改一下**app.less**中的 **.smallImg**为 **.smallImg1**,此时 **.smallImg1**就是无用样式了,因为没有页面没有类名为 **.smallImg1**的节点,再打包后查看 **main.css**
 
-![Alt text](readmeImage/image-19.png)
+![Alt text](./readmeImage/image-19.png)
 
 可以看到**main.css**已经没有 **.smallImg1**类名的样式了,做到了删除无用**css**的功能。
 
@@ -1869,7 +1869,7 @@ export default App
 点击展示文字时,才会动态加载**app.css**和**LazyDemo**组件的资源。
 
 
-![Alt text](readmeImage/image-20.png)
+![Alt text](./readmeImage/image-20.png)
 
 ### 7.10 资源预加载
 
@@ -1954,7 +1954,7 @@ export default App
 
 然后打包后查看效果,页面初始化时预加载了**PreFetchDemo.js**组件资源,但是不执行里面的代码,等点击展示按钮后从预加载的资源中直接取出来执行,不用再从服务器请求,节省了很多时间。
 
-![Alt text](readmeImage/image-21.png)
+![Alt text](./readmeImage/image-21.png)
 
 > 在测试时发现只有**js**资源设置**prefetch**模式才能触发资源预加载,**preload**模式触发不了,**css**和图片等资源不管设置**prefetch**还是**preload**都不能触发,不知道是哪里没配置好。
 
@@ -1993,11 +1993,11 @@ module.exports = {
 
 配置完成后再打包,可以看到打包后js的目录下多了一个 **.gz** 结尾的文件
 
-![Alt text](readmeImage/image-22.png)
+![Alt text](./readmeImage/image-22.png)
 
 因为只有**verdors.js**的大小超过了**10k**, 所以只有它生成了**gzip**压缩文件,借助**serve -s dist**启动**dist**,查看**verdors.js**加载情况
 
-![Alt text](readmeImage/image-23.png)
+![Alt text](./readmeImage/image-23.png)
 
 可以看到**verdors.js**的原始大小是**182kb**, 使用**gzip**压缩后的文件只剩下了**60.4kb**,减少了**70%** 的大小,可以极大提升页面加载速度。
 
