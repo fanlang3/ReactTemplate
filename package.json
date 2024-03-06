@@ -12,7 +12,10 @@
     "build:test": "cross-env NODE_ENV=production BASE_ENV=test webpack -c build/webpack.prod.js",
     "build:pre": "cross-env NODE_ENV=production BASE_ENV=pre webpack -c build/webpack.prod.js",
     "build:prod": "cross-env NODE_ENV=production BASE_ENV=production webpack -c build/webpack.prod.js",
-    "build:analy": "cross-env NODE_ENV=production BASE_ENV=production webpack -c build/webpack.analy.js"
+    "build:analy": "cross-env NODE_ENV=production BASE_ENV=production webpack -c build/webpack.analy.js",
+    "eslint-all": "eslint src/**/*.{ts,tsx} --max-warnings=0",
+    "eslint": "eslint --max-warnings=0",
+    "pre-check": "tsc && npx lint-staged"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +30,8 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/react": "^18.0.12",
     "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
     "autoprefixer": "^10.4.17",
     "babel-loader": "^8.2.5",
     "compression-webpack-plugin": "^10.0.0",
@@ -35,10 +40,13 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^4.0.0",
+    "eslint": "=8.16.0",
+    "eslint-plugin-react": "^7.33.2",
     "glob-all": "^3.3.1",
     "html-webpack-plugin": "^5.5.0",
     "less": "^4.2.0",
     "less-loader": "^11.1.4",
+    "lint-staged": "^12.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss": "^8.4.14",
     "postcss-loader": "^7.3.4",
@@ -57,5 +65,10 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "npm run eslint"
+    ]
   }
 }

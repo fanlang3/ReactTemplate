@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react'
-import ClassComponent from './components/Class'
+import React, { useState, useEffect } from 'react';
+import ClassComponent from './components/Class';
 import small from './assets/imgs/small.png';
 // import big from './assets/imgs/big.png';
 import big from '@/assets/imgs/big.png';
-import './app.css'
-import './app.less'
+import './app.css';
+import './app.less';
 
 const App = () => {
-    const [name, setName] = useState("fl");
-    const [num, setNum] = useState("");
-    const h2Click = () => {
-        setName('h2')
-    }
-    const inputChange = (e: any) => {
-        setNum(e.target.value)
-    }
-    useEffect(() => {
-        setName("cl")
-    }, [])
-    useEffect(() => {
-        console.log(name)
-    }, [name])
-    return (
-        <div>
-            <h2 onClick={h2Click}>webpack5-react-tsx</h2>
-            <ClassComponent />
-            <img src={small} alt='小于10kb图片' />
-            <img src={big} alt='大于10kb图片' />
-            <input type='text' value={num} onChange={inputChange} />
-        </div>
-    )
-}
-export default App
+  const [name, setName] = useState('fl');
+  const [num, setNum] = useState('');
+  const h2Click = () => {
+    setName('h2');
+  };
+  const inputChange = (e: any) => {
+    setNum(e.target.value);
+  };
+  useEffect(() => {
+    setName('cl');
+  }, []);
+  useEffect(() => {
+    console.log(name);
+  }, [name]);
+  return (
+    <div>
+      <h2 onClick={h2Click}>webpack5-react-tsx</h2>
+      <ClassComponent />
+      <img src={small} alt='小于10kb图片' />
+      <img src={big} alt='大于10kb图片' />
+      <input type='text' value={num} onChange={inputChange} />
+    </div>
+  );
+};
+export default App;
