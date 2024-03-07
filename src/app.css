@@ -1,4 +1,5 @@
 h2 {
-    color: blue;
-    transform: translateY(100px);
+  display: inline-block;
+  color: blue;
+  transform: translateY(100px);
 }

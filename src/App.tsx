@@ -27,7 +27,9 @@ const App = () => {
   }, [name]);
   return (
     <div>
-      <h2 onClick={h2Click}>webpack5-react-tsx</h2>
+      <h2 className='test-h2' onClick={h2Click}>
+        webpack5-react-tsx
+      </h2>
       <ClassComponent />
       <img src={small} alt='小于10kb图片' />
       <img src={big} alt='大于10kb图片' />

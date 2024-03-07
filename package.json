@@ -15,7 +15,8 @@
     "build:analy": "cross-env NODE_ENV=production BASE_ENV=production webpack -c build/webpack.analy.js",
     "eslint-all": "eslint src/**/*.{ts,tsx} --max-warnings=0",
     "eslint": "eslint --max-warnings=0",
-    "pre-check": "tsc && npx lint-staged"
+    "pre-check": "tsc && npx lint-staged",
+    "stylelint": "stylelint src/**/*.{css,less} --fix --custom-syntax postcss-less"
   },
   "keywords": [],
   "author": "",
@@ -52,11 +53,18 @@
     "lint-staged": "^12.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "postcss": "^8.4.14",
+    "postcss-less": "^6.0.0",
     "postcss-loader": "^7.3.4",
     "purgecss-webpack-plugin": "^4.1.3",
     "react-refresh": "^0.14.0",
     "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^3.3.4",
+    "stylelint": "^14.9.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^26.0.0",
+    "stylelint-less": "^3.0.1",
+    "stylelint-order": "^5.0.0",
     "thread-loader": "^3.0.4",
     "typescript": "^4.7.3",
     "webpack": "^5.73.0",
@@ -72,6 +80,9 @@
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "npm run eslint"
+    ],
+    "src/**/*.{css,less}": [
+      "npm run stylelint"
     ]
   }
 }
