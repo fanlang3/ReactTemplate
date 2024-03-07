@@ -15,8 +15,12 @@ const App = () => {
   const inputChange = (e: any) => {
     setNum(e.target.value);
   };
+  const tsTest = (num: number) => {
+    console.log(num);
+  };
   useEffect(() => {
     setName('cl');
+    tsTest(123);
   }, []);
   useEffect(() => {
     console.log(name);
