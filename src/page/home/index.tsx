@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import ClassComponent from './components/Class';
-import small from './assets/imgs/small.png';
+import ClassComponent from '../../components/Class';
+import small from '../../assets/imgs/small.png';
 // import big from './assets/imgs/big.png';
 import big from '@/assets/imgs/big.png';
-import './app.css';
-import './app.less';
+import './index.css';
+import './index.less';
 
-const App = () => {
+const Home = () => {
   const [name, setName] = useState('fl');
   const [num, setNum] = useState('');
   const h2Click = () => {
@@ -37,4 +37,4 @@ const App = () => {
     </div>
   );
 };
-export default App;
+export default Home;
