@@ -1,5 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import store from './store';
 import Root from './router';
 // import App from './App';
 // NODE_ENV区分模式：开发模式（development），打包模式（production）
@@ -8,5 +10,9 @@ console.log('NODE_ENV', process.env.NODE_ENV);
 console.log('BASE_ENV', process.env.BASE_ENV);
 const root = document.getElementById('root');
 if (root) {
-  createRoot(root).render(<Root />);
+  createRoot(root).render(
+    <Provider store={store}>
+      <Root />
+    </Provider>
+  );
 }
