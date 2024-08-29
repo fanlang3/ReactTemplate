@@ -1,34 +1,30 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "lib": [
-            "DOM",
-            "DOM.Iterable",
-            "ESNext"
-        ],
-        "allowJs": true,
-        "skipLibCheck": false,
-        "esModuleInterop": false,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "react", // react18这里也可以改成react-jsx
-        "experimentalDecorators": true, // 开启装饰器使用
-        "ignoreDeprecations": "5.0", // 解决suppressImplicitAnyIndexErrors报错问题
-        "suppressImplicitAnyIndexErrors": true, // 放开在object中获取类名的限制
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "src/*"
-            ]
-        }
-    },
-    "include": [
-        "./src"
-    ]
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react", // react18这里也可以改成react-jsx
+    // 开启装饰器使用
+    "experimentalDecorators": true,
+    "ignoreDeprecations": "5.0", // 解决suppressImplicitAnyIndexErrors报错问题
+    "suppressImplicitAnyIndexErrors": true, // 放开在object中获取类名的限制
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": ["./src"]
 }
+  
