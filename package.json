@@ -16,7 +16,8 @@
     "eslint-all": "eslint src/**/*.{ts,tsx} --max-warnings=0",
     "eslint": "eslint --max-warnings=0",
     "pre-check": "tsc && npx lint-staged",
-    "stylelint": "stylelint src/**/*.{css,less} --fix --custom-syntax postcss-less"
+    "stylelint": "stylelint src/**/*.{css,less} --fix --custom-syntax postcss-less",
+    "postinstall": "husky install"
   },
   "keywords": [],
   "author": "",

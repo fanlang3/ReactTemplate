@@ -1,4 +1,5 @@
-# 【前端工程化】webpack5从零搭建完整的react18+ts开发和打包环境
+# 【前端工程化】webpack5 从零搭建完整的 react18+ts 开发和打包环境
+
 ## 目录
 
 1.  前言
@@ -10,16 +11,15 @@
 7.  优化构建结果文件
 8.  总结
 
-
 **全文概览**
 
 ![Alt text](./readmeImage/image-1.png)
 
 ## 一. 前言
 
-从**2020**年**10**月**10**日，**webpack** 升级至 5 版本到现在已经快两年，**webpack5**版本优化了很多原有的功能比如**tree-shakin**g优化，也新增了很多新特性，比如联邦模块，具体变动可以看这篇文章[阔别两年，webpack 5 正式发布了！](https://juejin.cn/post/6882663278712094727)。
+从**2020**年**10**月**10**日，**webpack** 升级至 5 版本到现在已经快两年，**webpack5**版本优化了很多原有的功能比如**tree-shakin**g 优化，也新增了很多新特性，比如联邦模块，具体变动可以看这篇文章[阔别两年，webpack 5 正式发布了！](https://juejin.cn/post/6882663278712094727)。
 
-本文将使用最新的**webpack5**一步一步从零搭建一个完整的**react18+ts**开发和打包环境，配置完善的模块热替换以及**构建速度**和**构建结果**的优化，完整代码已上传到[webpack5-react-ts](https://github.com/guojiongwei/webpack5-react-ts.git)。本文只是配置**webpack**的，配置代码规范相关的可以看这篇文章[搭建react18+vite2+ts+prettier+eslint+lint-staged+husky+stylelint开发环境](https://juejin.cn/post/7101596844181962788)
+本文将使用最新的**webpack5**一步一步从零搭建一个完整的**react18+ts**开发和打包环境，配置完善的模块热替换以及**构建速度**和**构建结果**的优化，完整代码已上传到[webpack5-react-ts](https://github.com/guojiongwei/webpack5-react-ts.git)。本文只是配置**webpack**的，配置代码规范相关的可以看这篇文章[搭建 react18+vite2+ts+prettier+eslint+lint-staged+husky+stylelint 开发环境](https://juejin.cn/post/7101596844181962788)
 
 ## 二. 初始化项目
 
@@ -39,7 +39,7 @@ npm init -y
 ├── public
 │   └── index.html # html模板
 ├── src
-|   ├── App.tsx 
+|   ├── App.tsx
 │   └── index.tsx # react应用入口页面
 ├── tsconfig.json  # ts配置
 └── package.json
@@ -56,6 +56,7 @@ npm i webpack webpack-cli -D
 ```sh
 npm i react react-dom -S
 ```
+
 安装**react**类型依赖
 
 ```sh
@@ -67,16 +68,16 @@ npm i @types/react @types/react-dom -D
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>webpack5-react-ts</title>
-</head>
-<body>
-  <!-- 容器节点 -->
-  <div id="root"></div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>webpack5-react-ts</title>
+  </head>
+  <body>
+    <!-- 容器节点 -->
+    <div id="root"></div>
+  </body>
 </html>
 ```
 
@@ -98,7 +99,7 @@ npm i @types/react @types/react-dom -D
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react", // react18这里也可以改成react-jsx
+    "jsx": "react" // react18这里也可以改成react-jsx
   },
   "include": ["./src"]
 }
@@ -107,12 +108,12 @@ npm i @types/react @types/react-dom -D
 添加**src/App.tsx**内容
 
 ```tsx
-import React from 'react'
+import React from 'react';
 
 function App() {
-  return <h2>webpack5-react-ts</h2>
+  return <h2>webpack5-react-ts</h2>;
 }
-export default App
+export default App;
 ```
 
 添加**src/index.tsx**内容
@@ -123,16 +124,16 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 
 const root = document.getElementById('root');
-if(root) {
-  createRoot(root).render(<App />)
+if (root) {
+  createRoot(root).render(<App />);
 }
 ```
 
 现在项目业务代码已经添加好了,接下来可以配置**webpack**的代码了。
 
-## 三. 配置基础版React+ts环境
+## 三. 配置基础版 React+ts 环境
 
-### 2.1. webpack公共配置
+### 2.1. webpack 公共配置
 
 修改**webpack.base.js**
 
@@ -140,18 +141,18 @@ if(root) {
 
 ```js
 // webpack.base.js
-const path = require('path')
+const path = require('path');
 
 module.exports = {
-  entry: path.join(__dirname, '../src/index.tsx'), // 入口文件
-}
+  entry: path.join(__dirname, '../src/index.tsx') // 入口文件
+};
 ```
 
 **2. 配置出口文件**
 
 ```js
 // webpack.base.js
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   // ...
@@ -161,15 +162,15 @@ module.exports = {
     path: path.join(__dirname, '../dist'), // 打包结果输出路径
     clean: true, // webpack4需要配置clean-webpack-plugin来删除dist文件,webpack5内置了
     publicPath: '/' // 打包后文件的公共前缀路径
-  },
-}
+  }
+};
 ```
 
-**3. 配置loader解析ts和jsx**
+**3. 配置 loader 解析 ts 和 jsx**
 
 由于**webpack**默认只能识别**js**文件,不能识别**jsx**语法,需要配置**loader**的预设预设 [**@babel/preset-typescript**](https://www.babeljs.cn/docs/babel-preset-typescript) 来先**ts**语法转换为 **js** 语法,再借助预设 [**@babel/preset-react**](https://www.babeljs.cn/docs/babel-preset-react) 来识别**jsx**语法。
 
-**安装babel核心模块和babel预设**
+**安装 babel 核心模块和 babel 预设**
 
 ```sh
 npm i babel-loader @babel/core @babel/preset-react @babel/preset-typescript -D
@@ -189,19 +190,16 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             // 预设执行顺序由右往左,所以先处理ts,再处理jsx
-            presets: [
-              '@babel/preset-react',
-              '@babel/preset-typescript'
-            ]
+            presets: ['@babel/preset-react', '@babel/preset-typescript']
           }
         }
       }
     ]
   }
-}
+};
 ```
 
-**4. 配置extensions**
+**4. 配置 extensions**
 
 **extensions**是**webpack**的**resolve**解析配置下的选项，在引入模块时不带文件后缀时，会来该配置数组里面依次添加后缀查找文件，因为**ts**不支持引入以 **.ts**, **tsx**为后缀的文件，所以要在**extensions**中配置，而第三方库里面很多引入**js**文件没有带后缀，所以也要配置下**js**
 
@@ -212,14 +210,14 @@ module.exports = {
 module.exports = {
   // ...
   resolve: {
-    extensions: ['.js', '.tsx', '.ts'],
+    extensions: ['.js', '.tsx', '.ts']
   }
-}
+};
 ```
 
 这里只配置**js**, **tsx**和**ts**，其他文件引入都要求带后缀，可以提升构建速度。
 
-**4. 添加html-webpack-plugin插件**
+**4. 添加 html-webpack-plugin 插件**
 
 **webpack**需要把最终构建好的静态资源都引入到一个**html**文件中,这样才能在浏览器中运行,[html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)就是来做这件事情的,安装依赖：
 
@@ -231,23 +229,23 @@ npm i html-webpack-plugin -D
 
 ```js
 // webpack.base.js
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   // ...
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '../public/index.html'), // 模板取定义root节点的模板
-      inject: true, // 自动注入静态资源
+      inject: true // 自动注入静态资源
     })
   ]
-}
+};
 ```
 
 到这里一个最基础的**react**基本公共配置就已经配置好了,需要在此基础上分别配置开发环境和打包环境了。
 
-### 2.2. webpack开发环境配置
+### 2.2. webpack 开发环境配置
 
 **1. 安装 webpack-dev-server**
 
@@ -261,9 +259,9 @@ npm i webpack-dev-server webpack-merge -D
 
 ```js
 // webpack.dev.js
-const path = require('path')
-const { merge } = require('webpack-merge')
-const baseConfig = require('./webpack.base.js')
+const path = require('path');
+const { merge } = require('webpack-merge');
+const baseConfig = require('./webpack.base.js');
 
 // 合并公共配置,并添加开发环境配置
 module.exports = merge(baseConfig, {
@@ -275,13 +273,13 @@ module.exports = merge(baseConfig, {
     hot: true, // 开启热更新，后面会讲react模块热替换具体配置
     historyApiFallback: true, // 解决history路由404问题
     static: {
-      directory: path.join(__dirname, "../public"), //托管静态资源public文件夹
+      directory: path.join(__dirname, '../public') //托管静态资源public文件夹
     }
   }
-})
+});
 ```
 
-**2. package.json添加dev脚本**
+**2. package.json 添加 dev 脚本**
 
 在**package.json**的**scripts**中添加
 
@@ -294,21 +292,21 @@ module.exports = merge(baseConfig, {
 
 执行**npm run dev**,就能看到项目已经启动起来了,访问<http://localhost:3000/>,就可以看到项目界面,具体完善的**react**模块热替换在下面会讲到。
 
-### 2.3. webpack打包环境配置
+### 2.3. webpack 打包环境配置
 
-**1. 修改webpack.prod.js代码**
+**1. 修改 webpack.prod.js 代码**
 
 ```js
 // webpack.prod.js
 
-const { merge } = require('webpack-merge')
-const baseConfig = require('./webpack.base.js')
+const { merge } = require('webpack-merge');
+const baseConfig = require('./webpack.base.js');
 module.exports = merge(baseConfig, {
-  mode: 'production', // 生产模式,会开启tree-shaking和压缩代码,以及其他优化
-})
+  mode: 'production' // 生产模式,会开启tree-shaking和压缩代码,以及其他优化
+});
 ```
 
-**2. package.json添加build打包命令脚本**
+**2. package.json 添加 build 打包命令脚本**
 
 在**package.json**的**scripts**中添加**build**打包命令
 
@@ -322,7 +320,7 @@ module.exports = merge(baseConfig, {
 执行**npm run build**,最终打包在**dist**文件中, 打包结果:
 
 ```sh
-dist                    
+dist
 ├── static
 |   ├── js
 |     ├── main.js
@@ -354,8 +352,8 @@ npm i serve -g
 
 区分项目接口环境可以自定义一个环境变量**process.env.BASE_ENV**,设置环境变量可以借助[cross-env](https://www.npmjs.com/package/cross-env)和[webpack.DefinePlugin](https://www.webpackjs.com/plugins/define-plugin/)来设置。
 
--   **cross-env**：兼容各系统的设置环境变量的包
--   **webpack.DefinePlugin**：**webpack**内置的插件,可以为业务代码注入环境变量
+- **cross-env**：兼容各系统的设置环境变量的包
+- **webpack.DefinePlugin**：**webpack**内置的插件,可以为业务代码注入环境变量
 
 安装**cross-env**
 
@@ -371,7 +369,7 @@ npm i cross-env -D
     "dev:test": "cross-env NODE_ENV=development BASE_ENV=test webpack-dev-server -c build/webpack.dev.js",
     "dev:pre": "cross-env NODE_ENV=development BASE_ENV=pre webpack-dev-server -c build/webpack.dev.js",
     "dev:prod": "cross-env NODE_ENV=development BASE_ENV=production webpack-dev-server -c build/webpack.dev.js",
-    
+
     "build:dev": "cross-env NODE_ENV=production BASE_ENV=development webpack -c build/webpack.prod.js",
     "build:test": "cross-env NODE_ENV=production BASE_ENV=test webpack -c build/webpack.prod.js",
     "build:pre": "cross-env NODE_ENV=production BASE_ENV=pre webpack -c build/webpack.prod.js",
@@ -388,8 +386,8 @@ npm i cross-env -D
 ```js
 // webpack.base.js
 // ...
-console.log('NODE_ENV', process.env.NODE_ENV)
-console.log('BASE_ENV', process.env.BASE_ENV)
+console.log('NODE_ENV', process.env.NODE_ENV);
+console.log('BASE_ENV', process.env.BASE_ENV);
 ```
 
 执行**npm run build:dev**,可以看到打印的信息
@@ -406,7 +404,7 @@ console.log('BASE_ENV', process.env.BASE_ENV)
 ```js
 // webpack.base.js
 // ...
-const webpack = require('webpack')
+const webpack = require('webpack');
 module.export = {
   // ...
   plugins: [
@@ -415,7 +413,7 @@ module.export = {
       'process.env.BASE_ENV': JSON.stringify(process.env.BASE_ENV)
     })
   ]
-}
+};
 ```
 
 配置后会把值注入到业务代码里面去,**webpack**解析代码匹配到**process.env.BASE_ENV**,就会设置到对应的值。测试一下，在**src/index.tsx**打印一下两个环境变量
@@ -423,8 +421,8 @@ module.export = {
 ```tsx
 // src/index.tsx
 // ...
-console.log('NODE_ENV', process.env.NODE_ENV)
-console.log('BASE_ENV', process.env.BASE_ENV)
+console.log('NODE_ENV', process.env.NODE_ENV);
+console.log('BASE_ENV', process.env.BASE_ENV);
 ```
 
 执行**npm run dev:test**,可以在浏览器控制台看到打印的信息
@@ -436,27 +434,27 @@ console.log('BASE_ENV', process.env.BASE_ENV)
 
 当前是开发模式,业务环境是测试环境。
 
-### 4.2 处理css和less文件
+### 4.2 处理 css 和 less 文件
 
 在**src**下新增**app.css**
 
 ```css
 h2 {
-    color: red;
-    transform: translateY(100px);
+  color: red;
+  transform: translateY(100px);
 }
 ```
 
 在**src/App.tsx**中引入**app.css**
 
 ```tsx
-import React from 'react'
-import './app.css'
+import React from 'react';
+import './app.css';
 
 function App() {
-  return <h2>webpack5-rea11ct-ts</h2>
+  return <h2>webpack5-rea11ct-ts</h2>;
 }
-export default App
+export default App;
 ```
 
 执行打包命令**npm run build:dev**,会发现有报错, 因为**webpack**默认只认识**js**,是不识别**css**文件的,需要使用**loader**来解析**css**, 安装依赖
@@ -465,8 +463,8 @@ export default App
 npm i style-loader css-loader -D
 ```
 
--   **style-loader**: 把解析后的**css**代码从**js**中抽离,放到头部的**style**标签中(在运行时做的)
--   **css-loader:** 解析**css**文件代码
+- **style-loader**: 把解析后的**css**代码从**js**中抽离,放到头部的**style**标签中(在运行时做的)
+- **css-loader:** 解析**css**文件代码
 
 因为解析**css**的配置开发和打包环境都会用到,所以加在公共配置**webpack.base.js**中
 
@@ -475,17 +473,17 @@ npm i style-loader css-loader -D
 // ...
 module.exports = {
   // ...
-  module: { 
+  module: {
     rules: [
       // ...
       {
         test: /.css$/, //匹配 css 文件
-        use: ['style-loader','css-loader']
+        use: ['style-loader', 'css-loader']
       }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
 上面提到过,**loader**执行顺序是从右往左,从下往上的,匹配到**css**文件后先用**css-loader**解析**css**, 最后借助**style-loader**把**css**插入到头部**style**标签中。
@@ -494,7 +492,7 @@ module.exports = {
 
 ![Alt text](./readmeImage/image-2.png)
 
-### 4.3 支持less或scss
+### 4.3 支持 less 或 scss
 
 项目开发中,为了更好的提升开发体验,一般会使用**css**超集**less**或者**scss**,对于这些超集也需要对应的**loader**来识别解析。以**less**为例,需要安装依赖:
 
@@ -502,8 +500,8 @@ module.exports = {
 npm i less-loader less -D
 ```
 
--   **less-loader**: 解析**less**文件代码,把**less**编译为**css**
--   **less**: **less**核心
+- **less-loader**: 解析**less**文件代码,把**less**编译为**css**
+- **less**: **less**核心
 
 实现支持**less**也很简单,只需要在**rules**中添加**less**文件解析,遇到**less**文件,使用**less-loader**解析为**css**,再进行**css**解析流程,修改**webpack.base.js**：
 
@@ -517,12 +515,12 @@ module.exports = {
       // ...
       {
         test: /.(css|less)$/, //匹配 css和less 文件
-        use: ['style-loader','css-loader', 'less-loader']
+        use: ['style-loader', 'css-loader', 'less-loader']
       }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
 测试一下,新增**src/app.less**
@@ -539,7 +537,7 @@ module.exports = {
 
 ![Alt text](./readmeImage/image-3.png)
 
-### 4.4 处理css3前缀兼容
+### 4.4 处理 css3 前缀兼容
 
 虽然**css3**现在浏览器支持率已经很高了, 但有时候需要兼容一些低版本浏览器,需要给**css3**加前缀,可以借助插件来自动加前缀, [postcss-loader](https://link.juejin.cn/?target=https%3A%2F%2Fwebpack.docschina.org%2Floaders%2Fpostcss-loader%2F)就是来给**css3**加浏览器前缀的,安装依赖：
 
@@ -547,15 +545,15 @@ module.exports = {
 npm i postcss-loader autoprefixer -D
 ```
 
--   **postcss-loader**：处理**css**时自动加前缀
--   **autoprefixer**：决定添加哪些浏览器前缀到**css**中
+- **postcss-loader**：处理**css**时自动加前缀
+- **autoprefixer**：决定添加哪些浏览器前缀到**css**中
 
 修改**webpack.base.js**, 在解析**css**和**less**的规则中添加配置
 
 ```js
 module.exports = {
   // ...
-  module: { 
+  module: {
     rules: [
       // ...
       {
@@ -576,9 +574,9 @@ module.exports = {
         ]
       }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
 配置完成后,需要有一份要兼容浏览器的清单,让**postcss-loader**知道要加哪些浏览器的前缀,在根目录创建 **.browserslistrc**文件
@@ -599,7 +597,7 @@ chrome 35 # 兼容chrome 35
 ```js
 module.exports = {
   plugins: ['autoprefixer']
-}
+};
 ```
 
 修改**webpack.base.js**, 取消**postcss-loader**的**options**配置
@@ -609,27 +607,22 @@ module.exports = {
 // ...
 module.exports = {
   // ...
-  module: { 
+  module: {
     rules: [
       // ...
       {
         test: /.(css|less)$/, //匹配 css和less 文件
-        use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader',
-          'less-loader'
-        ]
-      },
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader']
+      }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
 提取**postcss-loader**配置后,再次打包,可以看到依然可以解析**css**, **less**文件, **css3**对应前缀依然存在。
 
-### 4.5 babel预设处理js兼容
+### 4.5 babel 预设处理 js 兼容
 
 现在**js**不断新增很多方便好用的标准语法来方便开发,甚至还有非标准语法比如装饰器,都极大的提升了代码可读性和开发效率。但前者标准语法很多低版本浏览器不支持,后者非标准语法所有的浏览器都不支持。需要把最新的标准语法转换为低版本语法,把非标准语法转换为标准语法才能让浏览器识别解析,而**babel**就是来做这件事的,这里只讲配置,更详细的可以看[Babel 那些事儿](https://juejin.cn/post/6992371845349507108)。
 
@@ -639,10 +632,10 @@ module.exports = {
 npm i babel-loader @babel/core @babel/preset-env core-js -D
 ```
 
--   babel-loader: 使用 **babel** 加载最新js代码并将其转换为 **ES5**（上面已经安装过）
--   @babel/corer: **babel** 编译的核心包
--   @babel/preset-env: **babel** 编译的预设,可以转换目前最新的**js**标准语法
--   core-js: 使用低版本**js**语法模拟高版本的库,也就是垫片
+- babel-loader: 使用 **babel** 加载最新 js 代码并将其转换为 **ES5**（上面已经安装过）
+- @babel/corer: **babel** 编译的核心包
+- @babel/preset-env: **babel** 编译的预设,可以转换目前最新的**js**标准语法
+- core-js: 使用低版本**js**语法模拟高版本的库,也就是垫片
 
 修改**webpack.base.js**
 
@@ -660,17 +653,17 @@ module.exports = {
             // 执行顺序由右往左,所以先处理ts,再处理jsx,最后再试一下babel转换为低版本语法
             presets: [
               [
-                "@babel/preset-env",
+                '@babel/preset-env',
                 {
                   // 设置兼容目标浏览器版本,这里可以不写,babel-loader会自动寻找上面配置好的文件.browserslistrc
                   // "targets": {
                   //  "chrome": 35,
                   //  "ie": 9
                   // },
-                   "useBuiltIns": "usage", // 根据配置的浏览器兼容,以及代码中使用到的api进行引入polyfill按需添加
-                   "corejs": 3, // 配置使用core-js低版本
-                  }
-                ],
+                  useBuiltIns: 'usage', // 根据配置的浏览器兼容,以及代码中使用到的api进行引入polyfill按需添加
+                  corejs: 3 // 配置使用core-js低版本
+                }
+              ],
               '@babel/preset-react',
               '@babel/preset-typescript'
             ]
@@ -679,7 +672,7 @@ module.exports = {
       }
     ]
   }
-}
+};
 ```
 
 此时再打包就会把语法转换为对应浏览器兼容的语法了。
@@ -690,23 +683,23 @@ module.exports = {
 // babel.config.js
 module.exports = {
   // 执行顺序由右往左,所以先处理ts,再处理jsx,最后再试一下babel转换为低版本语法
-  "presets": [
+  presets: [
     [
-      "@babel/preset-env",
+      '@babel/preset-env',
       {
         // 设置兼容目标浏览器版本,这里可以不写,babel-loader会自动寻找上面配置好的文件.browserslistrc
         // "targets": {
         //  "chrome": 35,
         //  "ie": 9
         // },
-        "useBuiltIns": "usage", // 根据配置的浏览器兼容,以及代码中使用到的api进行引入polyfill按需添加
-        "corejs": 3 // 配置使用core-js使用的版本
+        useBuiltIns: 'usage', // 根据配置的浏览器兼容,以及代码中使用到的api进行引入polyfill按需添加
+        corejs: 3 // 配置使用core-js使用的版本
       }
     ],
-    "@babel/preset-react",
-    "@babel/preset-typescript"
+    '@babel/preset-react',
+    '@babel/preset-typescript'
   ]
-}
+};
 ```
 
 移除**webpack.base.js**中**babel-loader**的**options**配置
@@ -720,7 +713,7 @@ module.exports = {
       {
         test: /.(ts|tsx)$/,
         use: 'babel-loader'
-      },
+      }
       // 如果node_moduels中也有要处理的语法，可以把js|jsx文件配置加上
       // {
       //  test: /.(js|jsx)$/,
@@ -729,37 +722,33 @@ module.exports = {
       // ...
     ]
   }
-}
+};
 ```
 
-
-### 4.6 babel处理js非标准语法
+### 4.6 babel 处理 js 非标准语法
 
 现在**react**主流开发都是函数组件和**react-hooks**,但有时也会用类组件,可以用装饰器简化代码。
 
 新增**src/components/Class.tsx**组件, 在**App.tsx**中引入该组件使用
 
 ```tsx
-import React, { PureComponent } from "react";
+import React, { PureComponent } from 'react';
 
 // 装饰器为,组件添加age属性
 function addAge(Target: Function) {
-  Target.prototype.age = 111
+  Target.prototype.age = 111;
 }
 // 使用装饰圈
 @addAge
 class Class extends PureComponent {
-
-  age?: number
+  age?: number;
 
   render() {
-    return (
-      <h2>我是类组件---{this.age}</h2>
-    )
+    return <h2>我是类组件---{this.age}</h2>;
   }
 }
 
-export default Class
+export default Class;
 ```
 
 需要开启一下**ts**装饰器支持,修改**tsconfig.json**文件
@@ -775,7 +764,7 @@ export default Class
 }
 ```
 
-上面Class组件代码中使用了装饰器,目前**js**标准语法是不支持的,现在运行或者打包会报错,不识别装饰器语法,需要借助**babel-loader**插件,安装依赖
+上面 Class 组件代码中使用了装饰器,目前**js**标准语法是不支持的,现在运行或者打包会报错,不识别装饰器语法,需要借助**babel-loader**插件,安装依赖
 
 ```sh
 npm i @babel/plugin-proposal-decorators -D
@@ -784,17 +773,15 @@ npm i @babel/plugin-proposal-decorators -D
 在**babel.config.js**中添加插件
 
 ```js
-module.exports = { 
+module.exports = {
   // ...
-  "plugins": [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }]
-  ]
-}
+  plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]]
+};
 ```
 
 现在项目就支持装饰器了。
 
-### 4.7 复制public文件夹
+### 4.7 复制 public 文件夹
 
 一般**public**文件夹都会放一些静态资源,可以直接根据绝对路径引入,比如**图片**,**css**,**js**文件等,不需要**webpack**进行解析,只需要打包的时候把**public**下内容复制到构建出口文件夹中,可以借助[copy-webpack-plugin](https://www.npmjs.com/package/copy-webpack-plugin)插件,安装依赖
 
@@ -807,7 +794,7 @@ npm i copy-webpack-plugin -D
 ```js
 // webpack.prod.js
 // ..
-const path = require('path')
+const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 module.exports = merge(baseConfig, {
   mode: 'production',
@@ -819,13 +806,13 @@ module.exports = merge(baseConfig, {
           from: path.resolve(__dirname, '../public'), // 复制public下文件
           to: path.resolve(__dirname, '../dist'), // 复制到dist目录中
           filter: source => {
-            return !source.includes('index.html') // 忽略index.html
+            return !source.includes('index.html'); // 忽略index.html
           }
-        },
-      ],
-    }),
+        }
+      ]
+    })
   ]
-})
+});
 ```
 
 在上面的配置中,忽略了**index.html**,因为**html-webpack-plugin**会以**public**下的**index.html**为模板生成一个**index.html**到**dist**文件下,所以不需要再复制该文件了。
@@ -835,18 +822,18 @@ module.exports = merge(baseConfig, {
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <!-- 绝对路径引入图标文件 -->
-  <link data-n-head="ssr" rel="icon" type="image/x-icon" href="/favicon.ico">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>webpack5-react-ts</title>
-</head>
-<body>
-  <!-- 容器节点 -->
-  <div id="root"></div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 绝对路径引入图标文件 -->
+    <link data-n-head="ssr" rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>webpack5-react-ts</title>
+  </head>
+  <body>
+    <!-- 容器节点 -->
+    <div id="root"></div>
+  </body>
 </html>
 ```
 
@@ -866,45 +853,45 @@ module.exports = {
     rules: [
       // ...
       {
-        test:/.(png|jpg|jpeg|gif|svg)$/, // 匹配图片文件
-        type: "asset", // type选择asset
+        test: /.(png|jpg|jpeg|gif|svg)$/, // 匹配图片文件
+        type: 'asset', // type选择asset
         parser: {
           dataUrlCondition: {
-            maxSize: 10 * 1024, // 小于10kb转base64位
+            maxSize: 10 * 1024 // 小于10kb转base64位
           }
         },
-        generator:{ 
-          filename:'static/images/[name][ext]', // 文件输出目录和命名
-        },
-      },
+        generator: {
+          filename: 'static/images/[name][ext]' // 文件输出目录和命名
+        }
+      }
     ]
   }
-}
+};
 ```
 
 测试一下,准备一张小于[10kb](https://github.com/guojiongwei/webpack5-react-ts/blob/main/src/assets/imgs/5kb.png)的图片和大于[10kb](https://github.com/guojiongwei/webpack5-react-ts/blob/main/src/assets/imgs/22kb.png)的图片,放在**src/assets/imgs**目录下, 修改**App.tsx**:
 
 ```js
-import React from 'react'
-import smallImg from './assets/imgs/5kb.png'
-import bigImg from './assets/imgs/22kb.png'
-import './app.css'
-import './app.less'
+import React from 'react';
+import smallImg from './assets/imgs/5kb.png';
+import bigImg from './assets/imgs/22kb.png';
+import './app.css';
+import './app.less';
 
 function App() {
   return (
     <>
-      <img src={smallImg} alt="小于10kb的图片" />
-      <img src={bigImg} alt="大于于10kb的图片" />
+      <img src={smallImg} alt='小于10kb的图片' />
+      <img src={bigImg} alt='大于于10kb的图片' />
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
+
 > 这个时候在引入图片的地方会报：**找不到模块“./assets/imgs/22kb.png”或其相应的类型声明**，需要添加一个图片的声明文件
 
 新增**src/images.d.ts**文件，添加内容
-
 
 ```js
 declare module '*.svg'
@@ -917,6 +904,7 @@ declare module '*.tiff'
 declare module '*.less'
 declare module '*.css'
 ```
+
 添加图片声明文件后,就可以正常引入图片了, 然后执行**npm run build:dev**打包,借助**serve -s dist**查看效果,可以看到可以正常解析图片了,并且小于**10kb**的图片被转成了**base64**位格式的。
 
 ![Alt text](./readmeImage/image-6.png)
@@ -924,24 +912,25 @@ declare module '*.css'
 **css**中的背景图片一样也可以解析,修改**app.tsx**。
 
 ```tsx
-import React from 'react'
-import smallImg from './assets/imgs/5kb.png'
-import bigImg from './assets/imgs/22kb.png'
-import './app.css'
-import './app.less'
+import React from 'react';
+import smallImg from './assets/imgs/5kb.png';
+import bigImg from './assets/imgs/22kb.png';
+import './app.css';
+import './app.less';
 
 function App() {
   return (
     <>
-      <img src={smallImg} alt="小于10kb的图片" />
-      <img src={bigImg} alt="大于于10kb的图片" />
+      <img src={smallImg} alt='小于10kb的图片' />
+      <img src={bigImg} alt='大于于10kb的图片' />
       <div className='smallImg'></div> {/* 小图片背景容器 */}
       <div className='bigImg'></div> {/* 大图片背景容器 */}
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
+
 修改**app.less**
 
 ```less
@@ -962,7 +951,6 @@ export default App
 
 可以看到背景图片也一样可以识别,小于**10kb**转为**base64**位。
 
-
 ### 4.9 处理字体和媒体文件
 
 字体文件和媒体文件这两种资源处理方式和处理图片是一样的,只需要把匹配的路径和打包后放置的路径修改一下就可以了。修改**webpack.base.js**文件：
@@ -974,35 +962,35 @@ module.exports = {
     rules: [
       // ...
       {
-        test:/.(woff2?|eot|ttf|otf)$/, // 匹配字体图标文件
-        type: "asset", // type选择asset
+        test: /.(woff2?|eot|ttf|otf)$/, // 匹配字体图标文件
+        type: 'asset', // type选择asset
         parser: {
           dataUrlCondition: {
-            maxSize: 10 * 1024, // 小于10kb转base64位
+            maxSize: 10 * 1024 // 小于10kb转base64位
           }
         },
-        generator:{ 
-          filename:'static/fonts/[name][ext]', // 文件输出目录和命名
-        },
+        generator: {
+          filename: 'static/fonts/[name][ext]' // 文件输出目录和命名
+        }
       },
       {
-        test:/.(mp4|webm|ogg|mp3|wav|flac|aac)$/, // 匹配媒体文件
-        type: "asset", // type选择asset
+        test: /.(mp4|webm|ogg|mp3|wav|flac|aac)$/, // 匹配媒体文件
+        type: 'asset', // type选择asset
         parser: {
           dataUrlCondition: {
-            maxSize: 10 * 1024, // 小于10kb转base64位
+            maxSize: 10 * 1024 // 小于10kb转base64位
           }
         },
-        generator:{ 
-          filename:'static/media/[name][ext]', // 文件输出目录和命名
-        },
-      },
+        generator: {
+          filename: 'static/media/[name][ext]' // 文件输出目录和命名
+        }
+      }
     ]
   }
-}
+};
 ```
 
-## 五. 配置react模块热更新
+## 五. 配置 react 模块热更新
 
 热更新上面已经在**devServer**中配置**hot**为**true**, 在**webpack4**中,还需要在插件中添加了**HotModuleReplacementPlugin**,在**webpack5**中,只要**devServer.hot**为**true**了,该插件就已经内置了。
 
@@ -1023,53 +1011,51 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 module.exports = merge(baseConfig, {
   // ...
   plugins: [
-    new ReactRefreshWebpackPlugin(), // 添加热更新插件
+    new ReactRefreshWebpackPlugin() // 添加热更新插件
   ]
-})
+});
 ```
 
 为**babel-loader**配置**react-refesh**刷新插件,修改**babel.config.js**文件
 
 ```js
-const isDEV = process.env.NODE_ENV === 'development' // 是否是开发模式
+const isDEV = process.env.NODE_ENV === 'development'; // 是否是开发模式
 module.exports = {
   // ...
-  "plugins": [
-    isDEV && require.resolve('react-refresh/babel'), // 如果是开发模式,就启动react热更新插件
+  plugins: [
+    isDEV && require.resolve('react-refresh/babel') // 如果是开发模式,就启动react热更新插件
     // ...
   ].filter(Boolean) // 过滤空值
-}
+};
 ```
 
 测试一下,修改**App.tsx**代码
 
 ```tsx
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 function App() {
-  const [ count, setCounts ] = useState('')
+  const [count, setCounts] = useState('');
   const onChange = (e: any) => {
-    setCounts(e.target.value)
-  }
+    setCounts(e.target.value);
+  };
   return (
     <>
       <h2>webpack5+react+ts</h2>
       <p>受控组件</p>
-      <input type="text" value={count} onChange={onChange} />
+      <input type='text' value={count} onChange={onChange} />
       <br />
       <p>非受控组件</p>
-      <input type="text" />
+      <input type='text' />
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
 
 在两个输入框分别输入内容后,修改**App.tsx**中**h2**标签的文本,会发现在不刷新浏览器的情况下,页面内容进行了热更新,并且**react**组件状态也会保留。
 
-
 ![Alt text](./readmeImage/image-7.png)
-
 
 ![Alt text](./readmeImage/image-8.png)
 
@@ -1088,15 +1074,13 @@ npm i speed-measure-webpack-plugin -D
 使用的时候为了不影响到正常的开发/打包模式,我们选择新建一个配置文件,新增**webpack**构建分析配置文件**build/webpack.analy.js**
 
 ```js
-const prodConfig = require('./webpack.prod.js') // 引入打包配置
+const prodConfig = require('./webpack.prod.js'); // 引入打包配置
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin'); // 引入webpack打包速度分析插件
 const smp = new SpeedMeasurePlugin(); // 实例化分析插件
-const { merge } = require('webpack-merge') // 引入合并webpack配置方法
+const { merge } = require('webpack-merge'); // 引入合并webpack配置方法
 
 // 使用smp.wrap方法,把生产环境配置传进去,由于后面可能会加分析配置,所以先留出合并空位
-module.exports = smp.wrap(merge(prodConfig, {
-
-}))
+module.exports = smp.wrap(merge(prodConfig, {}));
 ```
 
 修改**package.json**添加启动**webpack**打包分析脚本命令,在**scripts**新增：
@@ -1130,17 +1114,17 @@ module.exports = smp.wrap(merge(prodConfig, {
 module.exports = {
   // ...
   cache: {
-    type: 'filesystem', // 使用文件缓存
-  },
-}
+    type: 'filesystem' // 使用文件缓存
+  }
+};
 ```
 
 当前文章代码的测试结果
 
 | 模式         | 第一次耗时 | 第二次耗时 |
 | ------------ | ---------- | ---------- |
-| 启动开发模式 | 2869毫秒   | 687毫秒    |
-| 启动打包模式 | 5455毫秒   | 552毫秒    |
+| 启动开发模式 | 2869 毫秒  | 687 毫秒   |
+| 启动打包模式 | 5455 毫秒  | 552 毫秒   |
 
 通过开启**webpack5**持久化存储缓存,再次打包的时间提升了**90%**。
 
@@ -1150,7 +1134,7 @@ module.exports = {
 
 ![Alt text](./readmeImage/image-11.png)
 
-### 6.3 开启多线程loader
+### 6.3 开启多线程 loader
 
 **webpack**的**loader**默认在单线程执行,现代电脑一般都有多核**cpu**,可以借助多核**cpu**开启多线程**loader**解析,可以极大地提升**loader**解析的速度,[thread-loader](https://link.juejin.cn/?target=https%3A%2F%2Fwebpack.docschina.org%2Floaders%2Fthread-loader%2F%23root)就是用来开启多进程解析**loader**的,安装依赖
 
@@ -1174,12 +1158,12 @@ module.exports = {
       }
     ]
   }
-}
+};
 ```
 
-由于**thread-loader**不支持抽离css插件**MiniCssExtractPlugin.loader**(下面会讲),所以这里只配置了多进程解析**js**,开启多线程也是需要启动时间,大约**600ms**左右,所以适合规模比较大的项目。
+由于**thread-loader**不支持抽离 css 插件**MiniCssExtractPlugin.loader**(下面会讲),所以这里只配置了多进程解析**js**,开启多线程也是需要启动时间,大约**600ms**左右,所以适合规模比较大的项目。
 
-### 6.4 配置alias别名
+### 6.4 配置 alias 别名
 
 **webpack**支持设置别名**alias**,设置别名可以让后续引用的地方减少路径的复杂度。
 
@@ -1188,13 +1172,13 @@ module.exports = {
 ```js
 module.export = {
   // ...
-   resolve: {
+  resolve: {
     // ...
     alias: {
       '@': path.join(__dirname, '../src')
     }
   }
-}
+};
 ```
 
 修改**tsconfig.json**,添加**baseUrl**和**paths**
@@ -1218,24 +1202,25 @@ module.export = {
 **src/App.tsx**可以修改为
 
 ```tsx
-import React from 'react'
-import smallImg from '@/assets/imgs/5kb.png'
-import bigImg from '@/assets/imgs/22kb.png'
-import '@/app.css'
-import '@/app.less'
+import React from 'react';
+import smallImg from '@/assets/imgs/5kb.png';
+import bigImg from '@/assets/imgs/22kb.png';
+import '@/app.css';
+import '@/app.less';
 
 function App() {
   return (
     <>
-      <img src={smallImg} alt="小于10kb的图片" />
-      <img src={bigImg} alt="大于于10kb的图片" />
+      <img src={smallImg} alt='小于10kb的图片' />
+      <img src={bigImg} alt='大于于10kb的图片' />
       <div className='smallImg'></div> {/* 小图片背景容器 */}
       <div className='bigImg'></div> {/* 大图片背景容器 */}
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
+
 **src/app.less**可以修改为
 
 ```less
@@ -1253,12 +1238,13 @@ export default App
   }
 }
 ```
-### 6.5 缩小loader作用范围
+
+### 6.5 缩小 loader 作用范围
 
 一般第三库都是已经处理好的,不需要再次使用**loader**去解析,可以按照实际情况合理配置**loader**的作用范围,来减少不必要的**loader**解析,节省时间,通过使用 **include**和**exclude** 两个配置项,可以实现这个功能,常见的例如：
 
--   **include**：只解析该选项配置的模块
--   **exclude**：不解该选项配置的模块,优先级更高
+- **include**：只解析该选项配置的模块
+- **exclude**：不解该选项配置的模块,优先级更高
 
 修改**webpack.base.js**
 
@@ -1281,7 +1267,7 @@ module.exports = {
 
 其他**loader**也是相同的配置方式,如果除**src**文件外也还有需要解析的,就把对应的目录地址加上就可以了,比如需要引入**antd**的**css**,可以把**antd**的文件目录路径添加解析**css**规则到**include**里面。
 
-### 6.6 精确使用loader
+### 6.6 精确使用 loader
 
 **loader**在**webpack**构建过程中使用的位置是在**webpack**构建模块依赖关系引入新文件时，会根据文件后缀来倒序遍历**rules**数组，如果文件后缀和**test**正则匹配到了，就会使用该**rule**中配置的**loader**依次对文件源代码进行处理，最终拿到处理后的**sourceCode**结果，可以通过避免使用无用的**loader**解析来提升构建速度，比如使用**less-loader**解析**css**文件。
 
@@ -1298,25 +1284,16 @@ module.exports = {
       {
         test: /.css$/, //匹配所有的 css 文件
         include: [path.resolve(__dirname, '../src')],
-        use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader'
-        ]
+        use: ['style-loader', 'css-loader', 'postcss-loader']
       },
       {
         test: /.less$/, //匹配所有的 less 文件
         include: [path.resolve(__dirname, '../src')],
-        use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader',
-          'less-loader'
-        ]
-      },
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader']
+      }
     ]
   }
-}
+};
 ```
 
 **ts**和**tsx**也是如此，**ts**里面是不能写**jsx**语法的，所以可以尽可能避免使用 **@babel/preset-react**对 **.ts** 文件语法做处理。
@@ -1325,9 +1302,9 @@ module.exports = {
 
 **node**里面模块有三种
 
--   **node**核心模块
--   **node_modules**模块
--   自定义文件模块
+- **node**核心模块
+- **node_modules**模块
+- 自定义文件模块
 
 使用**require**和**import**引入模块时如果有准确的相对或者绝对路径,就会去按路径查询,如果引入的模块没有路径,会优先查询**node**核心模块,如果没有找到会去当前目录下**node_modules**中寻找,如果没有找到会查从父级文件夹查找**node_modules**,一直查到系统**node**全局模块。
 
@@ -1337,14 +1314,14 @@ module.exports = {
 
 ```js
 // webpack.base.js
-const path = require('path')
+const path = require('path');
 module.exports = {
   // ...
   resolve: {
-     // ...
-     modules: [path.resolve(__dirname, '../node_modules')], // 查找第三方模块只在本项目的node_modules中查找
-  },
-}
+    // ...
+    modules: [path.resolve(__dirname, '../node_modules')] // 查找第三方模块只在本项目的node_modules中查找
+  }
+};
 ```
 
 ### 6.8 devtool 配置
@@ -1364,9 +1341,9 @@ module.exports = {
 
 开发环境推荐：**eval-cheap-module-source-map**
 
--   本地开发首次打包慢点没关系,因为 **eval** 缓存的原因,  热更新会很快
--   开发中,我们每行代码不会写的太长,只需要定位到行就行,所以加上 **cheap**
--   我们希望能够找到源代码的错误,而不是打包后的,所以需要加上 **module**
+- 本地开发首次打包慢点没关系,因为 **eval** 缓存的原因, 热更新会很快
+- 开发中,我们每行代码不会写的太长,只需要定位到行就行,所以加上 **cheap**
+- 我们希望能够找到源代码的错误,而不是打包后的,所以需要加上 **module**
 
 修改**webpack.dev.js**
 
@@ -1375,18 +1352,17 @@ module.exports = {
 module.exports = {
   // ...
   devtool: 'eval-cheap-module-source-map'
-}
+};
 ```
 
 打包环境推荐：**none**(就是不配置**devtool**选项了，不是配置**devtool**: '**none**')
-
 
 ```js
 // webpack.prod.js
 module.exports = {
   // ...
   // devtool: '', // 不用配置devtool此项
-}
+};
 ```
 
 - **none**话调试只能看到编译后的代码,也不会泄露源代码,打包速度也会比较快。
@@ -1396,13 +1372,13 @@ module.exports = {
 
 除了上面的配置外，**webpack**还提供了其他的一些优化方式,本次搭建没有使用到，所以只简单罗列下
 
--   [**externals**](https://www.webpackjs.com/configuration/externals/): 外包拓展，打包时会忽略配置的依赖，会从上下文中寻找对应变量
--   [**module.noParse**](https://www.webpackjs.com/configuration/module/#module-noparse): 匹配到设置的模块,将不进行依赖解析，适合**jquery**,**boostrap**这类不依赖外部模块的包
--   [**ignorePlugin**](https://webpack.js.org/plugins/ignore-plugin/#root): 可以使用正则忽略一部分文件，常在使用多语言的包时可以把非中文语言包过滤掉
+- [**externals**](https://www.webpackjs.com/configuration/externals/): 外包拓展，打包时会忽略配置的依赖，会从上下文中寻找对应变量
+- [**module.noParse**](https://www.webpackjs.com/configuration/module/#module-noparse): 匹配到设置的模块,将不进行依赖解析，适合**jquery**,**boostrap**这类不依赖外部模块的包
+- [**ignorePlugin**](https://webpack.js.org/plugins/ignore-plugin/#root): 可以使用正则忽略一部分文件，常在使用多语言的包时可以把非中文语言包过滤掉
 
 ## 七. 优化构建结果文件
 
-### 7.1 webpack包分析工具
+### 7.1 webpack 包分析工具
 
 [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer)是分析**webpack**打包后文件的插件,使用交互式可缩放树形图可视化 **webpack** 输出文件的大小。通过该插件可以对打包后的文件进行观察和分析,可以方便我们对不完美的地方针对性的优化,安装依赖：
 
@@ -1414,23 +1390,25 @@ npm install webpack-bundle-analyzer -D
 
 ```js
 // webpack.analy.js
-const prodConfig = require('./webpack.prod.js')
+const prodConfig = require('./webpack.prod.js');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const smp = new SpeedMeasurePlugin();
-const { merge } = require('webpack-merge')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer') // 引入分析打包结果插件
-module.exports = smp.wrap(merge(prodConfig, {
-  plugins: [
-    new BundleAnalyzerPlugin() // 配置分析打包结果插件
-  ]
-}))
+const { merge } = require('webpack-merge');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer'); // 引入分析打包结果插件
+module.exports = smp.wrap(
+  merge(prodConfig, {
+    plugins: [
+      new BundleAnalyzerPlugin() // 配置分析打包结果插件
+    ]
+  })
+);
 ```
 
 配置好后,执行**npm run build:analy**命令,打包完成后浏览器会自动打开窗口,可以看到打包文件的分析结果页面,可以看到各个文件所占的资源大小。
 
 ![Alt text](./readmeImage/image-12.png)
 
-### 7.2 抽取css样式文件
+### 7.2 抽取 css 样式文件
 
 在开发环境我们希望**css**嵌入在**style**标签里面,方便样式热替换,但打包时我们希望把**css**单独抽离出来,方便配置缓存策略。而插件[mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)就是来帮我们做这件事的,安装依赖：
 
@@ -1443,11 +1421,11 @@ npm i mini-css-extract-plugin -D
 ```js
 // webpack.base.js
 // ...
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const isDev = process.env.NODE_ENV === 'development' // 是否是开发模式
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const isDev = process.env.NODE_ENV === 'development'; // 是否是开发模式
 module.exports = {
   // ...
-  module: { 
+  module: {
     rules: [
       // ...
       {
@@ -1468,19 +1446,19 @@ module.exports = {
           'postcss-loader',
           'less-loader'
         ]
-      },
+      }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
-再修改**webpack.prod.js**, 打包时添加抽离css插件
+再修改**webpack.prod.js**, 打包时添加抽离 css 插件
 
 ```js
 // webpack.prod.js
 // ...
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = merge(baseConfig, {
   mode: 'production',
   plugins: [
@@ -1488,20 +1466,20 @@ module.exports = merge(baseConfig, {
     // 抽离css插件
     new MiniCssExtractPlugin({
       filename: 'static/css/[name].css' // 抽离css的输出目录和名称
-    }),
+    })
   ]
-})
+});
 ```
 
 配置完成后,在开发模式**css**会嵌入到**style**标签里面,方便样式热替换,打包时会把**css**抽离成单独的**css**文件。
 
-### 7.3 压缩css文件
+### 7.3 压缩 css 文件
 
 上面配置了打包时把**css**抽离为单独**css**文件的配置,打开打包后的文件查看,可以看到默认**css**是没有压缩的,需要手动配置一下压缩**css**的插件。
 
 ![Alt text](./readmeImage/image-13.png)
 
-可以借助[css-minimizer-webpack-plugin](https://link.juejin.cn/?target=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fcss-minimizer-webpack-plugin)来压缩css,安装依赖
+可以借助[css-minimizer-webpack-plugin](https://link.juejin.cn/?target=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fcss-minimizer-webpack-plugin)来压缩 css,安装依赖
 
 ```sh
 npm i css-minimizer-webpack-plugin -D
@@ -1512,20 +1490,20 @@ npm i css-minimizer-webpack-plugin -D
 ```js
 // webpack.prod.js
 // ...
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 module.exports = {
   // ...
   optimization: {
     minimizer: [
-      new CssMinimizerPlugin(), // 压缩css
-    ],
-  },
-}
+      new CssMinimizerPlugin() // 压缩css
+    ]
+  }
+};
 ```
 
 再次执行打包就可以看到**css**已经被压缩了。
 
-### 7.4 压缩js文件
+### 7.4 压缩 js 文件
 
 设置**mode**为**production**时,**webpack**会使用内置插件[terser-webpack-plugin](https://www.npmjs.com/package/terser-webpack-plugin)压缩**js**文件,该插件默认支持多线程压缩,但是上面配置**optimization.minimizer**压缩**css**后,**js**压缩就失效了,需要手动再添加一下,**webpack**内部安装了该插件,由于**pnpm**解决了幽灵依赖问题,如果用的**pnpm**的话,需要手动再安装一下依赖。
 
@@ -1537,34 +1515,35 @@ npm i terser-webpack-plugin -D
 
 ```js
 // ...
-const TerserPlugin = require('terser-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
 module.exports = {
   // ...
   optimization: {
     minimizer: [
       // ...
-      new TerserPlugin({ // 压缩js
+      new TerserPlugin({
+        // 压缩js
         parallel: true, // 开启多线程压缩
         terserOptions: {
           compress: {
-            pure_funcs: ["console.log"] // 删除console.log
+            pure_funcs: ['console.log'] // 删除console.log
           }
         }
-      }),
-    ],
-  },
-}
+      })
+    ]
+  }
+};
 ```
 
 配置完成后再打包,**css**和**js**就都可以被压缩了。
 
-### 7.5 合理配置打包文件hash
+### 7.5 合理配置打包文件 hash
 
 项目维护的时候,一般只会修改一部分代码,可以合理配置文件缓存,来提升前端加载页面速度和减少服务器压力,而**hash**就是浏览器缓存策略很重要的一部分。**webpack**打包的**hash**分三种：
 
--   **hash**：跟整个项目的构建相关,只要项目里有文件更改,整个项目构建的**hash**值都会更改,并且全部文件都共用相同的**hash**值
--   **chunkhash**：不同的入口文件进行依赖文件解析、构建对应的**chunk**,生成对应的哈希值,文件本身修改或者依赖文件修改,**chunkhash**值会变化
--   **contenthash**：每个文件自己单独的 **hash** 值,文件的改动只会影响自身的 **hash** 值
+- **hash**：跟整个项目的构建相关,只要项目里有文件更改,整个项目构建的**hash**值都会更改,并且全部文件都共用相同的**hash**值
+- **chunkhash**：不同的入口文件进行依赖文件解析、构建对应的**chunk**,生成对应的哈希值,文件本身修改或者依赖文件修改,**chunkhash**值会变化
+- **contenthash**：每个文件自己单独的 **hash** 值,文件的改动只会影响自身的 **hash** 值
 
 **hash**是在输出文件时配置的,格式是**filename: "[name].\[chunkhash:8][ext]"**,**[xx]** 格式是**webpack**提供的占位符, **:8**是生成**hash**的长度。
 
@@ -1576,7 +1555,7 @@ module.exports = {
 | folder      | 文件所在文件夹             |
 | hash        | 每次构建生成的唯一 hash 值 |
 | chunkhash   | 根据 chunk 生成 hash 值    |
-| contenthash | 根据文件内容生成hash 值    |
+| contenthash | 根据文件内容生成 hash 值   |
 
 因为**js**我们在生产环境里会把一些公共库和程序入口文件区分开,单独打包构建,采用**chunkhash**的方式生成哈希值,那么只要我们不改动公共库的代码,就可以保证其哈希值不会受影响,可以继续使用浏览器缓存,所以**js**适合使用**chunkhash**。
 
@@ -1590,36 +1569,36 @@ module.exports = {
 module.exports = {
   // 打包文件出口
   output: {
-    filename: 'static/js/[name].[chunkhash:8].js', // // 加上[chunkhash:8]
+    filename: 'static/js/[name].[chunkhash:8].js' // // 加上[chunkhash:8]
     // ...
   },
   module: {
     rules: [
       {
-        test:/.(png|jpg|jpeg|gif|svg)$/, // 匹配图片文件
+        test: /.(png|jpg|jpeg|gif|svg)$/, // 匹配图片文件
         // ...
-        generator:{ 
-          filename:'static/images/[name].[contenthash:8][ext]' // 加上[contenthash:8]
-        },
+        generator: {
+          filename: 'static/images/[name].[contenthash:8][ext]' // 加上[contenthash:8]
+        }
       },
       {
-        test:/.(woff2?|eot|ttf|otf)$/, // 匹配字体文件
+        test: /.(woff2?|eot|ttf|otf)$/, // 匹配字体文件
         // ...
-        generator:{ 
-          filename:'static/fonts/[name].[contenthash:8][ext]', // 加上[contenthash:8]
-        },
+        generator: {
+          filename: 'static/fonts/[name].[contenthash:8][ext]' // 加上[contenthash:8]
+        }
       },
       {
-        test:/.(mp4|webm|ogg|mp3|wav|flac|aac)$/, // 匹配媒体文件
+        test: /.(mp4|webm|ogg|mp3|wav|flac|aac)$/, // 匹配媒体文件
         // ...
-        generator:{ 
-          filename:'static/media/[name].[contenthash:8][ext]', // 加上[contenthash:8]
-        },
-      },
+        generator: {
+          filename: 'static/media/[name].[contenthash:8][ext]' // 加上[contenthash:8]
+        }
+      }
     ]
-  },
+  }
   // ...
-}
+};
 ```
 
 再修改**webpack.prod.js**,修改抽离**css**文件名称格式
@@ -1627,19 +1606,20 @@ module.exports = {
 ```js
 // webpack.prod.js
 // ...
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = merge(baseConfig, {
   mode: 'production',
   plugins: [
     // 抽离css插件
     new MiniCssExtractPlugin({
       filename: 'static/css/[name].[contenthash:8].css' // 加上[contenthash:8]
-    }),
+    })
     // ...
-  ],
+  ]
   // ...
-})
+});
 ```
+
 再次打包就可以看到文件后面的**hash**了
 
 ### 7.6 代码分割第三方包和公共模块
@@ -1653,26 +1633,29 @@ module.exports = {
   // ...
   optimization: {
     // ...
-    splitChunks: { // 分隔代码
+    splitChunks: {
+      // 分隔代码
       cacheGroups: {
-        vendors: { // 提取node_modules代码
+        vendors: {
+          // 提取node_modules代码
           test: /node_modules/, // 只匹配node_modules里面的模块
           name: 'vendors', // 提取文件命名为vendors,js后缀和chunkhash会自动加
           minChunks: 1, // 只要使用一次就提取出来
           chunks: 'initial', // 只提取初始化就能获取到的模块,不管异步的
           minSize: 0, // 提取代码体积大于0就提取出来
-          priority: 1, // 提取优先级为1
+          priority: 1 // 提取优先级为1
         },
-        commons: { // 提取页面公共代码
+        commons: {
+          // 提取页面公共代码
           name: 'commons', // 提取文件命名为commons
           minChunks: 2, // 只要使用两次就提取出来
           chunks: 'initial', // 只提取初始化就能获取到的模块,不管异步的
-          minSize: 0, // 提取代码体积大于0就提取出来
+          minSize: 0 // 提取代码体积大于0就提取出来
         }
       }
     }
   }
-}
+};
 ```
 
 配置完成后执行打包,可以看到**node_modules**里面的模块被抽离到**verdors.ec725ef1.js**中,业务代码在**main.9a6bf38a.js**中。
@@ -1683,7 +1666,7 @@ module.exports = {
 
 ![Alt text](./readmeImage/image-16.png)
 
-### 7.7 tree-shaking清理未引用js
+### 7.7 tree-shaking 清理未引用 js
 
 [Tree Shaking](https://link.juejin.cn/?target=https%3A%2F%2Fwebpack.docschina.org%2Fguides%2Ftree-shaking%2F)的意思就是摇树,伴随着摇树这个动作,树上的枯叶都会被摇晃下来,这里的**tree-shaking**在代码中摇掉的是未使用到的代码,也就是未引用的代码,最早是在**rollup**库中出现的,**webpack**在**2**版本之后也开始支持。模式**mode**为**production**时就会默认开启**tree-shaking**功能以此来标记未引入代码然后移除掉,测试一下。
 
@@ -1691,45 +1674,45 @@ module.exports = {
 
 ```tsx
 // src/components/Demo1.tsx
-import React from "react";
+import React from 'react';
 function Demo1() {
-  return <h3>我是Demo1组件</h3>
+  return <h3>我是Demo1组件</h3>;
 }
-export default Demo1
+export default Demo1;
 
 // src/components/Demo2.tsx
-import React from "react";
+import React from 'react';
 function Demo2() {
-  return <h3>我是Demo2组件</h3>
+  return <h3>我是Demo2组件</h3>;
 }
-export default Demo2
+export default Demo2;
 ```
 
 再在**src/components**目录下新增**index.ts**, 把**Demo1**和**Demo2**组件引入进来再暴露出去
 
 ```ts
 // src/components/index.ts
-export { default as Demo1 } from './Demo1'
-export { default as Demo2 } from './Demo2'
+export { default as Demo1 } from './Demo1';
+export { default as Demo2 } from './Demo2';
 ```
 
 在**App.tsx**中引入两个组件,但只使用**Demo1**组件
 
 ```tsx
 // ...
-import { Demo1, Demo2 } from '@/components'
+import { Demo1, Demo2 } from '@/components';
 
 function App() {
-  return <Demo1 />
+  return <Demo1 />;
 }
-export default App
+export default App;
 ```
 
 执行打包,可以看到在**main.js**中搜索**Demo**,只搜索到了**Demo1**, 代表**Demo2**组件被**tree-shaking**移除掉了。
 
 ![Alt text](./readmeImage/image-17.png)
 
-### 7..8 tree-shaking清理未使用css
+### 7..8 tree-shaking 清理未使用 css
 
 **js**中会有未使用到的代码,**css**中也会有未被页面使用到的样式,可以通过[purgecss-webpack-plugin](https://www.npmjs.com/package/purgecss-webpack-plugin)插件打包的时候移除未使用到的**css**样式,这个插件是和[mini-css-extract-plugin](https://www.npmjs.com/package/mini-css-extract-plugin)插件配合使用的,在上面已经安装过,还需要[**glob-all**](https://www.npmjs.com/package/glob-all)来选择要检测哪些文件里面的类名和**id**还有标签名称, 安装依赖:
 
@@ -1742,9 +1725,9 @@ npm i purgecss-webpack-plugin glob-all -D
 ```js
 // webpack.prod.js
 // ...
-const globAll = require('glob-all')
-const PurgeCSSPlugin = require('purgecss-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const globAll = require('glob-all');
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   // ...
   plugins: [
@@ -1759,18 +1742,18 @@ module.exports = {
       paths: globAll.sync([
         `${path.join(__dirname, '../src')}/**/*.tsx`,
         path.join(__dirname, '../public/index.html')
-      ]),
-    }),
+      ])
+    })
   ]
-}
+};
 ```
 
 测试一下,用上面配置解析图片文件代码拿过来,修改**App.tsx**
 
 ```tsx
-import React from 'react'
-import './app.css'
-import './app.less'
+import React from 'react';
+import './app.css';
+import './app.less';
 
 function App() {
   return (
@@ -1778,9 +1761,9 @@ function App() {
       <div className='smallImg'></div>
       <div className='bigImg'></div>
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
 
 **App.tsx**中有两个**div**,类名分别是**smallImg**和**bigImg**,当前**app.less**代码为
@@ -1818,9 +1801,9 @@ export default App
 new PurgeCSSPlugin({
   // ...
   safelist: {
-    standard: [/^ant-/], // 过滤以ant-开头的类名，哪怕没用到也不删除
+    standard: [/^ant-/] // 过滤以ant-开头的类名，哪怕没用到也不删除
   }
-})
+});
 ```
 
 ### 7.9 资源懒加载
@@ -1832,42 +1815,45 @@ new PurgeCSSPlugin({
 以懒加载组件和**css**为例,新建懒加载组件**src/components/LazyDemo.tsx**
 
 ```tsx
-import React from "react";
+import React from 'react';
 
 function LazyDemo() {
-  return <h3>我是懒加载组件组件</h3>
+  return <h3>我是懒加载组件组件</h3>;
 }
 
-export default LazyDemo
+export default LazyDemo;
 ```
 
 修改**App.tsx**
 
 ```tsx
-import React, { lazy, Suspense, useState } from 'react'
-const LazyDemo = lazy(() => import('@/components/LazyDemo')) // 使用import语法配合react的Lazy动态引入资源
+import React, { lazy, Suspense, useState } from 'react';
+const LazyDemo = lazy(() => import('@/components/LazyDemo')); // 使用import语法配合react的Lazy动态引入资源
 
 function App() {
-  const [ show, setShow ] = useState(false)
-  
+  const [show, setShow] = useState(false);
+
   // 点击事件中动态引入css, 设置show为true
   const onClick = () => {
-    import('./app.css')
-    setShow(true)
-  }
+    import('./app.css');
+    setShow(true);
+  };
   return (
     <>
       <h2 onClick={onClick}>展示</h2>
       {/* show为true时加载LazyDemo组件 */}
-      { show && <Suspense fallback={null}><LazyDemo /></Suspense> }
+      {show && (
+        <Suspense fallback={null}>
+          <LazyDemo />
+        </Suspense>
+      )}
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
 
 点击展示文字时,才会动态加载**app.css**和**LazyDemo**组件的资源。
-
 
 ![Alt text](./readmeImage/image-20.png)
 
@@ -1875,10 +1861,10 @@ export default App
 
 上面配置了资源懒加载后,虽然提升了首屏渲染速度,但是加载到资源的时候会有一个去请求资源的延时,如果资源比较大会出现延迟卡顿现象,可以借助**link**标签的**rel**属性**prefetch**与**preload**,**link**标签除了加载**css**之外也可以加载**js**资源,设置**rel**属性可以规定**link**提前加载资源,但是加载资源后不执行,等用到了再执行。
 
-**rel的属性值**
+**rel 的属性值**
 
--   **preload**是告诉浏览器页面必定需要的资源,浏览器一定会加载这些资源。
--   **prefetch**是告诉浏览器页面可能需要的资源,浏览器不一定会加载这些资源,会在空闲时加载。
+- **preload**是告诉浏览器页面必定需要的资源,浏览器一定会加载这些资源。
+- **prefetch**是告诉浏览器页面可能需要的资源,浏览器不一定会加载这些资源,会在空闲时加载。
 
 对于当前页面很有必要的资源使用 **preload** ,对于可能在将来的页面中使用的资源使用 **prefetch**。
 
@@ -1898,58 +1884,68 @@ import(
 
 ```tsx
 // src/components/PreloadDemo.tsx
-import React from "react";
+import React from 'react';
 function PreloadDemo() {
-  return <h3>我是PreloadDemo组件</h3>
+  return <h3>我是PreloadDemo组件</h3>;
 }
-export default PreloadDemo
+export default PreloadDemo;
 
 // src/components/PreFetchDemo.tsx
-import React from "react";
+import React from 'react';
 function PreFetchDemo() {
-  return <h3>我是PreFetchDemo组件</h3>
+  return <h3>我是PreFetchDemo组件</h3>;
 }
-export default PreFetchDemo
+export default PreFetchDemo;
 ```
 
 修改**App.tsx**
 
 ```tsx
-import React, { lazy, Suspense, useState } from 'react'
+import React, { lazy, Suspense, useState } from 'react';
 
 // prefetch
-const PreFetchDemo = lazy(() => import(
-  /* webpackChunkName: "PreFetchDemo" */
-  /*webpackPrefetch: true*/
-  '@/components/PreFetchDemo'
-))
+const PreFetchDemo = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "PreFetchDemo" */
+      /*webpackPrefetch: true*/
+      '@/components/PreFetchDemo'
+    )
+);
 // preload
-const PreloadDemo = lazy(() => import(
-  /* webpackChunkName: "PreloadDemo" */
-  /*webpackPreload: true*/
-  '@/components/PreloadDemo'
- ))
+const PreloadDemo = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "PreloadDemo" */
+      /*webpackPreload: true*/
+      '@/components/PreloadDemo'
+    )
+);
 
 function App() {
-  const [ show, setShow ] = useState(false)
+  const [show, setShow] = useState(false);
 
   const onClick = () => {
-    setShow(true)
-  }
+    setShow(true);
+  };
   return (
     <>
       <h2 onClick={onClick}>展示</h2>
       {/* show为true时加载组件 */}
-      { show && (
+      {show && (
         <>
-          <Suspense fallback={null}><PreloadDemo /></Suspense>
-          <Suspense fallback={null}><PreFetchDemo /></Suspense>
+          <Suspense fallback={null}>
+            <PreloadDemo />
+          </Suspense>
+          <Suspense fallback={null}>
+            <PreFetchDemo />
+          </Suspense>
         </>
-      ) }
+      )}
     </>
-  )
+  );
 }
-export default App
+export default App;
 ```
 
 然后打包后查看效果,页面初始化时预加载了**PreFetchDemo.js**组件资源,但是不执行里面的代码,等点击展示按钮后从预加载的资源中直接取出来执行,不用再从服务器请求,节省了很多时间。
@@ -1958,7 +1954,7 @@ export default App
 
 > 在测试时发现只有**js**资源设置**prefetch**模式才能触发资源预加载,**preload**模式触发不了,**css**和图片等资源不管设置**prefetch**还是**preload**都不能触发,不知道是哪里没配置好。
 
-### 7.11 打包时生成gzip文件
+### 7.11 打包时生成 gzip 文件
 
 前端代码在浏览器运行,需要从服务器把**html**,**css**,**js**资源下载执行,下载的资源体积越小,页面加载速度就会越快。一般会采用**gzip**压缩,现在大部分浏览器和服务器都支持**gzip**,可以有效减少静态资源文件大小,压缩率在 **70%** 左右。
 
@@ -1973,13 +1969,13 @@ npm i compression-webpack-plugin -D
 添加配置,修改**webpack.prod.js**
 
 ```js
-const glob = require('glob')
-const CompressionPlugin  = require('compression-webpack-plugin')
+const glob = require('glob');
+const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = {
   // ...
   plugins: [
-     // ...
-     new CompressionPlugin({
+    // ...
+    new CompressionPlugin({
       test: /.(js|css)$/, // 只生成css,js压缩文件
       filename: '[path][base].gz', // 文件命名
       algorithm: 'gzip', // 压缩格式,默认是gzip
@@ -1988,10 +1984,10 @@ module.exports = {
       minRatio: 0.8 // 压缩率,默认值是 0.8
     })
   ]
-}
+};
 ```
 
-配置完成后再打包,可以看到打包后js的目录下多了一个 **.gz** 结尾的文件
+配置完成后再打包,可以看到打包后 js 的目录下多了一个 **.gz** 结尾的文件
 
 ![Alt text](./readmeImage/image-22.png)
 
@@ -2055,11 +2051,11 @@ module.exports = {
 
 ## 参考
 
-1. [【前端工程化】webpack5从零搭建完整的react18+ts开发和打包环境](https://juejin.cn/post/7111922283681153038)
-2. 
-3.  [webpack官网](https://www.webpackjs.com/)
-4.  [babel官网](https://www.babeljs.cn/)
-5.  [【万字】透过分析 webpack 面试题，构建 webpack5.x 知识体系](https://juejin.cn/post/7023242274876162084)
-6.  [Babel 那些事儿](https://juejin.cn/post/6992371845349507108)
-7.  [阔别两年，webpack 5 正式发布了！](https://juejin.cn/post/6882663278712094727)
-8.  [webpack从入门到进阶](https://www.bilibili.com/video/BV1Pf4y157Ni?p=1)
+1. [【前端工程化】webpack5 从零搭建完整的 react18+ts 开发和打包环境](https://juejin.cn/post/7111922283681153038)
+2.
+3. [webpack 官网](https://www.webpackjs.com/)
+4. [babel 官网](https://www.babeljs.cn/)
+5. [【万字】透过分析 webpack 面试题，构建 webpack5.x 知识体系](https://juejin.cn/post/7023242274876162084)
+6. [Babel 那些事儿](https://juejin.cn/post/6992371845349507108)
+7. [阔别两年，webpack 5 正式发布了！](https://juejin.cn/post/6882663278712094727)
+8. [webpack 从入门到进阶](https://www.bilibili.com/video/BV1Pf4y157Ni?p=1)

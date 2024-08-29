@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actionCreators';
-const ReduxTest = (props: any) => {
+interface propsType {
+  myData: string;
+  setData: any;
+}
+const ReduxTest = (props: propsType) => {
   const { myData, setData } = props;
   console.log('AAAAAAAAA', myData);
   return (
